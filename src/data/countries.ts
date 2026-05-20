@@ -1,4 +1,4 @@
-import { Country } from "@/src/types";
+import { Country } from "@/types";
 
 export const countries: Country[] = [
   {
