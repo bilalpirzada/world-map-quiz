@@ -2,10 +2,24 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { WorldMap } from "@/components/map/WorldMap";
+//import { WorldMap } from "@/components/map/WorldMap";
 import { ScoreBoard } from "@/components/ui/ScoreBoard";
 import { useGameState } from "@/hooks/useGameState";
 import { countries } from "@/data/countries";
+
+import dynamic from "next/dynamic";
+
+const WorldMap = dynamic(
+  () => import("@/components/map/WorldMap").then(mod => mod.WorldMap),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center h-full bg-[#0a1628] rounded-xl">
+        <p className="text-gray-400 animate-pulse">Loading map...</p>
+      </div>
+    ),
+  }
+);
 
 // ISO alpha-3 to numeric map (subset for our dataset)
 const ALPHA3_TO_NUMERIC: Record<string, string> = {
