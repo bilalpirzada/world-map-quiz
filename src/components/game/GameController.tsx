@@ -41,6 +41,7 @@ export const GameController = () => {
     : undefined;
 
   const handleCountryClick = (numericId: string, name: string) => {
+    console.log("Country clicked:", numericId, name);
     if (state.isCorrect !== null) return; // already answered
 
     // find alpha3 from numeric
@@ -165,10 +166,10 @@ if (!mounted) {
       <div className="flex-1 min-h-0">
         <WorldMap
           // highlightId={undefined}
-          // correctId={isCorrectFeedback === true ? feedbackId ?? undefined : undefined}
-          // wrongId={isCorrectFeedback === false ? feedbackId ?? undefined : undefined}
-          // onCountryClick={handleCountryClick}
-          // interactive={state.isCorrect === null}
+           correctId={isCorrectFeedback === true ? feedbackId ?? undefined : undefined}
+           wrongId={isCorrectFeedback === false ? feedbackId ?? undefined : undefined}
+           onCountryClick={handleCountryClick}
+           interactive={state.isCorrect === null}
         />
       </div>
 

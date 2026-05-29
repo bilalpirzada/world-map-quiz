@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps";
 
 const GEO_URL = "/countries-110m.json";
@@ -21,6 +21,9 @@ export const WorldMap = ({
   const [tooltipContent, setTooltipContent] = useState("");
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [showTooltip, setShowTooltip] = useState(false);
+  const isDragging = useRef(false);
+  const mouseDownPos = useRef({ x: 0, y: 0 });
+  const lastHoveredRef = useRef<{ id: string; name: string } | null>(null);
 
   const getCountryColor = (geoId: string) => {
     if (correctId && geoId === correctId) return "#22c55e";
@@ -35,7 +38,30 @@ export const WorldMap = ({
   };
 
   return (
-    <div style={{ width: "100%", height: "500px", background: "#0a1628", borderRadius: "12px", position: "relative" }}>
+    <div
+      style={{
+        width: "100%",
+        height: "500px",
+        background: "#0a1628",
+        borderRadius: "12px",
+        position: "relative",
+      }}
+      onMouseDown={(e) => {
+        mouseDownPos.current = { x: e.clientX, y: e.clientY };
+        isDragging.current = false;
+      }}
+      onMouseMove={(e) => {
+        const dx = Math.abs(e.clientX - mouseDownPos.current.x);
+        const dy = Math.abs(e.clientY - mouseDownPos.current.y);
+        if (dx > 5 || dy > 5) isDragging.current = true;
+      }}
+      onMouseUp={() => {
+        console.log("div mouseup fired, dragging:", isDragging.current, "hovered:", lastHoveredRef.current);
+        if (!isDragging.current && interactive && onCountryClick && lastHoveredRef.current) {
+          onCountryClick(lastHoveredRef.current.id, lastHoveredRef.current.name);
+        }
+      }}
+    >
       <ComposableMap
         projection="geoNaturalEarth1"
         width={800}
@@ -55,17 +81,15 @@ export const WorldMap = ({
                     fill={getCountryColor(geoId)}
                     stroke={getStrokeColor(geoId)}
                     strokeWidth={0.5}
-                    onClick={() => {
-                      if (interactive && onCountryClick) {
-                        onCountryClick(geoId, geo.properties.name);
-                      }
-                    }}
                     onMouseEnter={(e) => {
+                      lastHoveredRef.current = { id: geoId, name: geo.properties.name };
                       setTooltipContent(geo.properties.name);
                       setPosition({ x: e.clientX, y: e.clientY });
                       setShowTooltip(true);
                     }}
-                    onMouseLeave={() => setShowTooltip(false)}
+                    onMouseLeave={() => {
+                      setShowTooltip(false);
+                    }}
                     style={{
                       hover: {
                         fill: interactive ? "#3b82f6" : getCountryColor(geoId),
