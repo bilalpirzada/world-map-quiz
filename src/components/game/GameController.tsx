@@ -55,6 +55,22 @@ export const GameController = () => {
     }, 2000);
   };
 
+
+  const [mounted, setMounted] = useState(false);
+
+useEffect(() => {
+  setMounted(true);
+}, []);
+
+if (!mounted) {
+  return (
+    <div className="flex items-center justify-center h-full">
+      <p className="text-gray-400 animate-pulse text-lg">Loading map...</p>
+    </div>
+  );
+}
+
+
   if (isGameOver) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-6 text-white">
