@@ -23,9 +23,16 @@ const WorldMap = dynamic(
 
 // ISO alpha-3 to numeric map (subset for our dataset)
 const ALPHA3_TO_NUMERIC: Record<string, string> = {
-  FRA: "250", BRA: "076", JPN: "392", USA: "840",
-  EGY: "818", AUS: "036", IND: "356", ZAF: "710",
-  CAN: "124", ARG: "032",
+  FRA: "250",
+  BRA: "76",
+  JPN: "392",
+  USA: "840",
+  EGY: "818",
+  AUS: "36",
+  IND: "356",
+  ZAF: "710",
+  CAN: "124",
+  ARG: "32",
 };
 
 export const GameController = () => {
@@ -41,7 +48,7 @@ export const GameController = () => {
     : undefined;
 
   const handleCountryClick = (numericId: string, name: string) => {
-    console.log("Country clicked:", numericId, name);
+    console.log("Raw numericId from map:", numericId, "| name:", name);
     if (state.isCorrect !== null) return; // already answered
 
     // find alpha3 from numeric
@@ -49,25 +56,34 @@ export const GameController = () => {
       ([, v]) => v === numericId
     )?.[0];
 
+    console.log("alpha3 found:", alpha3); // 👈 add this
+
     if (!alpha3) return; // clicked a country not in our dataset
 
-    const isCorrect = alpha3 === state.currentQuestion?.id;
-    setIsCorrectFeedback(isCorrect);
-    setFeedbackId(numericId);
-    setFeedbackMessage(
-      isCorrect
-        ? `✅ Correct! That's ${state.currentQuestion?.name}!`
-        : `❌ Wrong! That was ${name}. The answer was ${state.currentQuestion?.name}.`
-    );
+   const isCorrect = alpha3 === state.currentQuestion?.id;
+setIsCorrectFeedback(isCorrect);
+setFeedbackMessage(
+  isCorrect
+    ? `✅ Correct! That's ${state.currentQuestion?.name}!`
+    : `❌ Wrong! That was ${name}. The answer was ${state.currentQuestion?.name}.`
+);
 
-    submitAnswer(alpha3);
+if (isCorrect) {
+  // flash the correct country green
+  setFeedbackId(ALPHA3_TO_NUMERIC[state.currentQuestion!.id]);
+} else {
+  // flash the clicked country red
+  setFeedbackId(numericId);
+}
 
-    setTimeout(() => {
-      setFeedbackId(null);
-      setIsCorrectFeedback(null);
-      setFeedbackMessage("");
-      nextQuestion();
-    }, 2000);
+submitAnswer(alpha3);
+
+setTimeout(() => {
+  setFeedbackId(null);
+  setIsCorrectFeedback(null);
+  setFeedbackMessage("");
+  nextQuestion();
+}, 2000);
   };
 
 
