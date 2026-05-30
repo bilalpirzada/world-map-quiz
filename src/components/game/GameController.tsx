@@ -21,18 +21,23 @@ const WorldMap = dynamic(
   }
 );
 
-// ISO alpha-3 to numeric map (subset for our dataset)
 const ALPHA3_TO_NUMERIC: Record<string, string> = {
-  FRA: "250",
-  BRA: "76",
-  JPN: "392",
-  USA: "840",
-  EGY: "818",
-  AUS: "36",
-  IND: "356",
-  ZAF: "710",
-  CAN: "124",
-  ARG: "32",
+  // Europe
+  FRA: "250", DEU: "276", GBR: "826", ITA: "380", ESP: "724",
+  PRT: "620", NLD: "528", CHE: "756", SWE: "752", NOR: "578",
+  POL: "616", UKR: "804", GRC: "300",
+  // Asia
+  JPN: "392", IND: "356", CHN: "156", KOR: "410", IDN: "360",
+  SAU: "682", TUR: "792", PAK: "586", BGD: "050", THA: "764",
+  VNM: "704", IRN: "364",
+  // Africa
+  EGY: "818", ZAF: "710", NGA: "566", ETH: "231", KEN: "404",
+  TZA: "834", GHA: "288", MAR: "504", DZA: "12",
+  // Americas
+  USA: "840", CAN: "124", MEX: "484", BRA: "76", ARG: "32",
+  COL: "170", CHL: "152", PER: "604", VEN: "862",
+  // Oceania
+  AUS: "36", NZL: "554",
 };
 
 export const GameController = () => {
