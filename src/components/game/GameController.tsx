@@ -48,7 +48,7 @@ export const GameController = () => {
     : undefined;
 
   const handleCountryClick = (numericId: string, name: string) => {
-    console.log("Raw numericId from map:", numericId, "| name:", name);
+   
     if (state.isCorrect !== null) return; // already answered
 
     // find alpha3 from numeric
@@ -56,7 +56,7 @@ export const GameController = () => {
       ([, v]) => v === numericId
     )?.[0];
 
-    console.log("alpha3 found:", alpha3); // 👈 add this
+  
 
     if (!alpha3) return; // clicked a country not in our dataset
 
