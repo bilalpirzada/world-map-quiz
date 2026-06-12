@@ -28,7 +28,7 @@ const ALPHA3_TO_NUMERIC: Record<string, string> = {
   POL: "616", UKR: "804", GRC: "300",
   // Asia
   JPN: "392", IND: "356", CHN: "156", KOR: "410", IDN: "360",
-  SAU: "682", TUR: "792", PAK: "586", BGD: "050", THA: "764",
+  SAU: "682", TUR: "792", PAK: "586", BGD: "50", THA: "764",
   VNM: "704", IRN: "364",
   // Africa
   EGY: "818", ZAF: "710", NGA: "566", ETH: "231", KEN: "404",
