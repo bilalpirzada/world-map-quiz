@@ -88,7 +88,7 @@ setTimeout(() => {
   setIsCorrectFeedback(null);
   setFeedbackMessage("");
   nextQuestion();
-}, 2000);
+}, 3000);
   };
 
 
@@ -180,22 +180,32 @@ if (!mounted) {
       </AnimatePresence>
 
       {/* Feedback Message */}
-      <AnimatePresence>
-        {feedbackMessage && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className={`text-center py-2 px-4 rounded-xl font-semibold text-sm ${
-              isCorrectFeedback
-                ? "bg-green-900/50 text-green-300 border border-green-700"
-                : "bg-red-900/50 text-red-300 border border-red-700"
-            }`}
-          >
-            {feedbackMessage}
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <AnimatePresence>
+  {feedbackMessage && (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      className={`text-center py-3 px-4 rounded-xl font-semibold text-sm ${
+        isCorrectFeedback
+          ? "bg-green-900/50 text-green-300 border border-green-700"
+          : "bg-red-900/50 text-red-300 border border-red-700"
+      }`}
+    >
+      <p>{feedbackMessage}</p>
+      {state.currentQuestion && (
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="text-xs mt-2 text-gray-300 italic"
+        >
+          💡 {state.currentQuestion.funFact}
+        </motion.p>
+      )}
+    </motion.div>
+  )}
+</AnimatePresence>
 
       {/* Map */}
       <div className="flex-1 min-h-0">
