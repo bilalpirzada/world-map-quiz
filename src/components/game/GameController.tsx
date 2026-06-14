@@ -21,24 +21,7 @@ const WorldMap = dynamic(
   }
 );
 
-const ALPHA3_TO_NUMERIC: Record<string, string> = {
-  // Europe
-  FRA: "250", DEU: "276", GBR: "826", ITA: "380", ESP: "724",
-  PRT: "620", NLD: "528", CHE: "756", SWE: "752", NOR: "578",
-  POL: "616", UKR: "804", GRC: "300",
-  // Asia
-  JPN: "392", IND: "356", CHN: "156", KOR: "410", IDN: "360",
-  SAU: "682", TUR: "792", PAK: "586", BGD: "50", THA: "764",
-  VNM: "704", IRN: "364",
-  // Africa
-  EGY: "818", ZAF: "710", NGA: "566", ETH: "231", KEN: "404",
-  TZA: "834", GHA: "288", MAR: "504", DZA: "12",
-  // Americas
-  USA: "840", CAN: "124", MEX: "484", BRA: "76", ARG: "32",
-  COL: "170", CHL: "152", PER: "604", VEN: "862",
-  // Oceania
-  AUS: "36", NZL: "554",
-};
+
 
 export const GameController = () => {
   const { state, submitAnswer, nextQuestion, resetGame, isGameOver } =
@@ -48,48 +31,42 @@ export const GameController = () => {
   const [isCorrectFeedback, setIsCorrectFeedback] = useState<boolean | null>(null);
   const [feedbackMessage, setFeedbackMessage] = useState("");
 
-  const currentNumericId = state.currentQuestion
-    ? ALPHA3_TO_NUMERIC[state.currentQuestion.id]
-    : undefined;
+ const question = state.currentQuestion;
 
   const handleCountryClick = (numericId: string, name: string) => {
-   
-    if (state.isCorrect !== null) return; // already answered
+  if (state.isCorrect !== null || !question) return;
 
-    // find alpha3 from numeric
-    const alpha3 = Object.entries(ALPHA3_TO_NUMERIC).find(
-      ([, v]) => v === numericId
-    )?.[0];
+  const clicked = countries.find(c => c.numericId === numericId);
 
-  
+  if (!clicked) {
+    setFeedbackMessage(`⚠️ ${name} is not recognized. Try another country!`);
+    setIsCorrectFeedback(false);
+    setTimeout(() => {
+      setFeedbackMessage("");
+      setIsCorrectFeedback(null);
+    }, 1500);
+    return;
+  }
 
-    if (!alpha3) return; // clicked a country not in our dataset
+  const isCorrect = clicked.id === question.id;
+  setIsCorrectFeedback(isCorrect);
+  setFeedbackMessage(
+    isCorrect
+      ? `✅ Correct! That's ${question.name}!`
+      : `❌ Wrong! That was ${clicked.name}. The answer was ${question.name}.`
+  );
 
-   const isCorrect = alpha3 === state.currentQuestion?.id;
-setIsCorrectFeedback(isCorrect);
-setFeedbackMessage(
-  isCorrect
-    ? `✅ Correct! That's ${state.currentQuestion?.name}!`
-    : `❌ Wrong! That was ${name}. The answer was ${state.currentQuestion?.name}.`
-);
+  setFeedbackId(isCorrect ? question.numericId : numericId);
 
-if (isCorrect) {
-  // flash the correct country green
-  setFeedbackId(ALPHA3_TO_NUMERIC[state.currentQuestion!.id]);
-} else {
-  // flash the clicked country red
-  setFeedbackId(numericId);
-}
+  submitAnswer(clicked.id);
 
-submitAnswer(alpha3);
-
-setTimeout(() => {
-  setFeedbackId(null);
-  setIsCorrectFeedback(null);
-  setFeedbackMessage("");
-  nextQuestion();
-}, 3000);
-  };
+  setTimeout(() => {
+    setFeedbackId(null);
+    setIsCorrectFeedback(null);
+    setFeedbackMessage("");
+    nextQuestion();
+  }, 3000);
+};
 
 
   const [mounted, setMounted] = useState(false);
