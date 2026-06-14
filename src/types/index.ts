@@ -1,5 +1,6 @@
 export interface Country {
   id: string;          // ISO alpha-3 code e.g. "FRA"
+  numericId: string;
   name: string;
   capital: string;
   continent: string;
