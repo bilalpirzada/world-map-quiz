@@ -147,7 +147,7 @@ export const WorldMap = ({
       </div>
 
       {/* Zoom Controls */}
-      <div className="absolute bottom-3 right-3 flex flex-col gap-1.5 z-10">
+<div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 flex flex-col gap-1 sm:gap-1.5 z-20">
         <button
           onClick={handleZoomIn}
           className="w-8 h-8 flex items-center justify-center bg-[#0d1f35] border border-[#2d5a8e] rounded-lg text-white hover:bg-[#1e3a5f] active:scale-95 transition-all shadow-lg"

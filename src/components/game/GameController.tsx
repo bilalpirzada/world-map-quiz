@@ -185,7 +185,7 @@ if (!mounted) {
 </AnimatePresence>
 
       {/* Map */}
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-0 relative">
         <WorldMap
           // highlightId={undefined}
            correctId={isCorrectFeedback === true ? feedbackId ?? undefined : undefined}
