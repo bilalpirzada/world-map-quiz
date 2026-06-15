@@ -73,11 +73,15 @@ export const WorldMap = ({
             center={center}
             minZoom={1}
             maxZoom={8}
-             filterZoomEvent={(event) => {
-    // Block all native zoom gestures (wheel, double-click, pinch)
-    // Only allow zoom changes triggered programmatically (zoom buttons)
-    return false;
-  }}
+            filterZoomEvent={(event) => {
+  const e = event as unknown as Event;
+  // Allow mouse drag (pan) and touch drag, block wheel/dblclick/pinch zoom
+  if (e.type === "wheel" || e.type === "dblclick") return false;
+  if (e.type === "touchstart" || e.type === "touchmove") {
+    return (e as TouchEvent).touches?.length === 1;
+  }
+  return true;
+}}
             onMoveStart={() => {
               dragMoved.current = false;
             }}
