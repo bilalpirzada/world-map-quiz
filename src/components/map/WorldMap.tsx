@@ -48,7 +48,7 @@ export const WorldMap = ({
   };
 
   return (
-    <div className="relative w-full h-[280px] sm:h-[400px] lg:h-[500px]">
+    <div className="relative w-full h-full">
       {/* Map area */}
       <div
         style={{

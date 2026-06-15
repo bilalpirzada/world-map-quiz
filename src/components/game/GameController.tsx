@@ -113,7 +113,7 @@ if (!mounted) {
   }
 
   return (
-    <div className="flex flex-col h-full gap-4">
+    <div className="flex flex-col h-full gap-2 sm:gap-3 min-h-0">
 
       {/* Scoreboard */}
       <ScoreBoard
@@ -132,7 +132,7 @@ if (!mounted) {
   initial={{ opacity: 0, y: -10, scale: 0.95 }}
   animate={{ opacity: 1, y: 0, scale: 1 }}
   exit={{ opacity: 0, y: 10, scale: 0.95 }}
-  className="text-center py-4 px-4 bg-[#0d1f35] border border-[#1e3a5f] rounded-xl relative overflow-hidden"
+  className="text-center py-2 sm:py-3 px-4 bg-[#0d1f35] border border-[#1e3a5f] rounded-xl relative overflow-hidden shrink-0"
 >
   {/* Continent badge */}
   <span className="absolute top-3 right-3 text-xs px-2 py-1 rounded-full bg-[#1e3a5f] text-blue-300 font-medium">
@@ -142,7 +142,7 @@ if (!mounted) {
   <p className="text-gray-400 text-sm mb-2">Click the country on the map</p>
 
   <motion.p
-    className="text-6xl mb-2 drop-shadow-lg"
+    className="text-3xl sm:text-5xl mb-1 drop-shadow-lg"
     initial={{ rotate: -10, scale: 0.5 }}
     animate={{ rotate: 0, scale: 1 }}
     transition={{ type: "spring", stiffness: 200, damping: 12 }}
@@ -150,8 +150,8 @@ if (!mounted) {
     {state.currentQuestion.flag}
   </motion.p>
 
-  <p className="text-white font-bold text-2xl tracking-wide">{state.currentQuestion.name}</p>
-  <p className="text-gray-400 text-sm mt-1">Capital: {state.currentQuestion.capital}</p>
+  <p className="text-white font-bold text-lg sm:text-2xl tracking-wide">{state.currentQuestion.name}</p>
+<p className="text-gray-400 text-xs sm:text-sm mt-0.5">Capital: {state.currentQuestion.capital}</p>
 </motion.div>
         )}
       </AnimatePresence>

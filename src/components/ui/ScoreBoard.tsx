@@ -19,7 +19,7 @@ export const ScoreBoard = ({
   maxLives,
 }: ScoreBoardProps) => {
   return (
-  <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-between gap-2 sm:gap-0 w-full px-2 sm:px-4 py-2 sm:py-3 bg-[#0d1f35] border border-[#1e3a5f] rounded-xl">
+  <div className="shrink-0 grid grid-cols-2 sm:flex sm:items-center sm:justify-between gap-2 sm:gap-0 w-full px-2 sm:px-4 py-2 sm:py-3 bg-[#0d1f35] border border-[#1e3a5f] rounded-xl">
 
     {/* Score */}
     <div className="flex items-center gap-1.5 sm:gap-2">
