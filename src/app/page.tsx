@@ -2,7 +2,7 @@ import { GameController } from "@/components/game/GameController";
 
 export default function Home() {
   return (
-    <main className="h-screen overflow-hidden bg-[#060f1e] p-2 sm:p-4 flex flex-col">
+    <main className="h-[100dvh] overflow-hidden bg-[#060f1e] p-2 sm:p-4 flex flex-col">
       <div className="max-w-4xl mx-auto h-full w-full flex flex-col min-h-0">
 
         {/* Header */}
