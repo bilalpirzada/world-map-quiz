@@ -25,9 +25,8 @@ export const WorldMap = ({
   const [zoom, setZoom] = useState(1);
   const [center, setCenter] = useState<[number, number]>([0, 20]);
 
-  const isDragging = useRef(false);
-  const mouseDownPos = useRef({ x: 0, y: 0 });
-  const lastHoveredRef = useRef<{ id: string; name: string } | null>(null);
+  // Track whether the last interaction was a drag (pan) vs a tap/click
+  const dragMoved = useRef(false);
 
   const getCountryColor = (geoId: string) => {
     if (correctId && geoId === correctId) return "#22c55e";
@@ -41,145 +40,150 @@ export const WorldMap = ({
     return "#2d5a8e";
   };
 
-  const handleZoomIn = () => setZoom(z => Math.min(z * 1.5, 8));
-  const handleZoomOut = () => setZoom(z => Math.max(z / 1.5, 1));
+  const handleZoomIn = () => setZoom((z) => Math.min(z * 1.5, 8));
+  const handleZoomOut = () => setZoom((z) => Math.max(z / 1.5, 1));
   const handleReset = () => {
     setZoom(1);
     setCenter([0, 20]);
   };
 
- return (
-  <div style={{ position: "relative", width: "100%", height: "100%" }} className="w-full h-[280px] sm:h-[400px] lg:h-[500px]">
-
-    {/* Map click-area */}
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        background: "#0a1628",
-        borderRadius: "12px",
-        position: "relative",
-        touchAction: "none",
-      }}
-      onMouseDown={(e) => {
-        if (e.button !== 0) return;
-        mouseDownPos.current = { x: e.clientX, y: e.clientY };
-        isDragging.current = false;
-      }}
-      onMouseMove={(e) => {
-        const dx = Math.abs(e.clientX - mouseDownPos.current.x);
-        const dy = Math.abs(e.clientY - mouseDownPos.current.y);
-        if (dx > 5 || dy > 5) isDragging.current = true;
-      }}
-      onMouseUp={(e) => {
-        if (e.button !== 0) return;
-        if (!isDragging.current && interactive && onCountryClick && lastHoveredRef.current) {
-          onCountryClick(lastHoveredRef.current.id, lastHoveredRef.current.name);
-        }
-      }}
-    >
-      <ComposableMap
-        projection="geoNaturalEarth1"
-        width={800}
-        height={500}
-        projectionConfig={{ scale: 140 }}
-        style={{ width: "100%", height: "100%" }}
-      >
-        <ZoomableGroup
-          zoom={zoom}
-          center={center}
-          onMoveEnd={({ zoom: z, coordinates }) => {
-            setZoom(z);
-            setCenter(coordinates);
-          }}
-          minZoom={1}
-          maxZoom={8}
-        >
-          <Geographies geography={GEO_URL}>
-            {({ geographies }) =>
-              geographies.map((geo) => {
-                const geoId = String(geo.id);
-                return (
-                  <Geography
-                    key={geo.rsmKey}
-                    geography={geo}
-                    fill={getCountryColor(geoId)}
-                    stroke={getStrokeColor(geoId)}
-                    strokeWidth={0.5 / zoom}
-                    onMouseEnter={(e) => {
-                      lastHoveredRef.current = { id: geoId, name: geo.properties.name };
-                      setTooltipContent(geo.properties.name);
-                      setPosition({ x: e.clientX, y: e.clientY });
-                      setShowTooltip(true);
-                    }}
-                    onMouseLeave={() => setShowTooltip(false)}
-                    style={{
-                      hover: {
-                        fill: interactive ? "#3b82f6" : getCountryColor(geoId),
-                        stroke: "#60a5fa",
-                        strokeWidth: 0.8 / zoom,
-                        outline: "none",
-                        cursor: interactive ? "pointer" : "default",
-                      },
-                      pressed: {
-                        fill: "#1d4ed8",
-                        outline: "none",
-                      },
-                      default: { outline: "none" },
-                    }}
-                  />
-                );
-              })
-            }
-          </Geographies>
-        </ZoomableGroup>
-      </ComposableMap>
-    </div>
-
-    {/* Zoom Controls - OUTSIDE the click-area div */}
-    <div className="absolute bottom-3 right-3 flex flex-col gap-1.5 z-10">
-      <button
-        onClick={handleZoomIn}
-        className="w-8 h-8 flex items-center justify-center bg-[#0d1f35] border border-[#2d5a8e] rounded-lg text-white hover:bg-[#1e3a5f] active:scale-95 transition-all shadow-lg"
-        aria-label="Zoom in"
-      >
-        <Plus className="w-4 h-4" />
-      </button>
-      <button
-        onClick={handleZoomOut}
-        className="w-8 h-8 flex items-center justify-center bg-[#0d1f35] border border-[#2d5a8e] rounded-lg text-white hover:bg-[#1e3a5f] active:scale-95 transition-all shadow-lg"
-        aria-label="Zoom out"
-      >
-        <Minus className="w-4 h-4" />
-      </button>
-      <button
-        onClick={handleReset}
-        className="w-8 h-8 flex items-center justify-center bg-[#0d1f35] border border-[#2d5a8e] rounded-lg text-white hover:bg-[#1e3a5f] active:scale-95 transition-all shadow-lg"
-        aria-label="Reset view"
-      >
-        <RotateCcw className="w-3.5 h-3.5" />
-      </button>
-    </div>
-
-    {/* Tooltip */}
-    {showTooltip && (
+  return (
+    <div className="relative w-full h-[280px] sm:h-[400px] lg:h-[500px]">
+      {/* Map area */}
       <div
         style={{
-          position: "fixed",
-          left: position.x + 12,
-          top: position.y - 28,
-          background: "#111827",
-          color: "white",
-          padding: "2px 8px",
-          borderRadius: "6px",
-          fontSize: "12px",
-          pointerEvents: "none",
-          zIndex: 999,
+          width: "100%",
+          height: "100%",
+          background: "#0a1628",
+          borderRadius: "12px",
+          position: "relative",
+          touchAction: "none",
+          overflow: "hidden",
         }}
       >
-        {tooltipContent}
+        <ComposableMap
+          projection="geoNaturalEarth1"
+          width={800}
+          height={500}
+          projectionConfig={{ scale: 140 }}
+          style={{ width: "100%", height: "100%" }}
+        >
+          <ZoomableGroup
+            zoom={zoom}
+            center={center}
+            minZoom={1}
+            maxZoom={8}
+            onMoveStart={() => {
+              dragMoved.current = false;
+            }}
+            onMove={() => {
+              // Any move event while dragging marks this as a pan, not a click
+              dragMoved.current = true;
+            }}
+            onMoveEnd={({ zoom: z, coordinates }) => {
+              setZoom(z);
+              setCenter(coordinates);
+            }}
+          >
+            <Geographies geography={GEO_URL}>
+              {({ geographies }) =>
+                geographies.map((geo) => {
+                  const geoId = String(geo.id);
+                  return (
+                    <Geography
+                      key={geo.rsmKey}
+                      geography={geo}
+                      fill={getCountryColor(geoId)}
+                      stroke={getStrokeColor(geoId)}
+                      strokeWidth={0.5 / zoom}
+                      onMouseEnter={(e) => {
+                        setTooltipContent(geo.properties.name);
+                        setPosition({ x: e.clientX, y: e.clientY });
+                        setShowTooltip(true);
+                      }}
+                      onMouseLeave={() => setShowTooltip(false)}
+                      onClick={() => {
+                        // Ignore the click that immediately follows a pan/drag
+                        if (dragMoved.current) {
+                          dragMoved.current = false;
+                          return;
+                        }
+                        if (interactive && onCountryClick) {
+                          onCountryClick(geoId, geo.properties.name);
+                        }
+                      }}
+                      style={{
+                        default: {
+                          outline: "none",
+                        },
+                        hover: {
+                          fill: interactive ? "#3b82f6" : getCountryColor(geoId),
+                          stroke: "#60a5fa",
+                          strokeWidth: 0.8 / zoom,
+                          outline: "none",
+                          cursor: interactive ? "pointer" : "default",
+                        },
+                        pressed: {
+                          fill: "#1d4ed8",
+                          outline: "none",
+                        },
+                      }}
+                    />
+                  );
+                })
+              }
+            </Geographies>
+          </ZoomableGroup>
+        </ComposableMap>
       </div>
-    )}
-  </div>
-);
+
+      {/* Zoom Controls */}
+      <div className="absolute bottom-3 right-3 flex flex-col gap-1.5 z-10">
+        <button
+          onClick={handleZoomIn}
+          className="w-8 h-8 flex items-center justify-center bg-[#0d1f35] border border-[#2d5a8e] rounded-lg text-white hover:bg-[#1e3a5f] active:scale-95 transition-all shadow-lg"
+          aria-label="Zoom in"
+          type="button"
+        >
+          <Plus className="w-4 h-4" />
+        </button>
+        <button
+          onClick={handleZoomOut}
+          className="w-8 h-8 flex items-center justify-center bg-[#0d1f35] border border-[#2d5a8e] rounded-lg text-white hover:bg-[#1e3a5f] active:scale-95 transition-all shadow-lg"
+          aria-label="Zoom out"
+          type="button"
+        >
+          <Minus className="w-4 h-4" />
+        </button>
+        <button
+          onClick={handleReset}
+          className="w-8 h-8 flex items-center justify-center bg-[#0d1f35] border border-[#2d5a8e] rounded-lg text-white hover:bg-[#1e3a5f] active:scale-95 transition-all shadow-lg"
+          aria-label="Reset view"
+          type="button"
+        >
+          <RotateCcw className="w-3.5 h-3.5" />
+        </button>
+      </div>
+
+      {/* Tooltip */}
+      {showTooltip && (
+        <div
+          style={{
+            position: "fixed",
+            left: position.x + 12,
+            top: position.y - 28,
+            background: "#111827",
+            color: "white",
+            padding: "2px 8px",
+            borderRadius: "6px",
+            fontSize: "12px",
+            pointerEvents: "none",
+            zIndex: 999,
+          }}
+        >
+          {tooltipContent}
+        </div>
+      )}
+    </div>
+  );
 };
