@@ -73,6 +73,11 @@ export const WorldMap = ({
             center={center}
             minZoom={1}
             maxZoom={8}
+             filterZoomEvent={(event) => {
+    // Block all native zoom gestures (wheel, double-click, pinch)
+    // Only allow zoom changes triggered programmatically (zoom buttons)
+    return false;
+  }}
             onMoveStart={() => {
               dragMoved.current = false;
             }}
