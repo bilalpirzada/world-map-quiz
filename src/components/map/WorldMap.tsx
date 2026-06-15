@@ -48,14 +48,18 @@ export const WorldMap = ({
     setCenter([0, 20]);
   };
 
-  return (
+ return (
+  <div style={{ position: "relative", width: "100%", height: "100%" }} className="w-full h-[280px] sm:h-[400px] lg:h-[500px]">
+
+    {/* Map click-area */}
     <div
-      className="w-full h-[280px] sm:h-[400px] lg:h-[500px]"
       style={{
+        width: "100%",
+        height: "100%",
         background: "#0a1628",
         borderRadius: "12px",
         position: "relative",
-        touchAction: "none", // prevent browser pinch-zoom on the map
+        touchAction: "none",
       }}
       onMouseDown={(e) => {
         if (e.button !== 0) return;
@@ -130,51 +134,52 @@ export const WorldMap = ({
           </Geographies>
         </ZoomableGroup>
       </ComposableMap>
-
-      {/* Zoom Controls */}
-      <div className="absolute bottom-3 right-3 flex flex-col gap-1.5">
-        <button
-          onClick={handleZoomIn}
-          className="w-8 h-8 flex items-center justify-center bg-[#0d1f35] border border-[#2d5a8e] rounded-lg text-white hover:bg-[#1e3a5f] active:scale-95 transition-all shadow-lg"
-          aria-label="Zoom in"
-        >
-          <Plus className="w-4 h-4" />
-        </button>
-        <button
-          onClick={handleZoomOut}
-          className="w-8 h-8 flex items-center justify-center bg-[#0d1f35] border border-[#2d5a8e] rounded-lg text-white hover:bg-[#1e3a5f] active:scale-95 transition-all shadow-lg"
-          aria-label="Zoom out"
-        >
-          <Minus className="w-4 h-4" />
-        </button>
-        <button
-          onClick={handleReset}
-          className="w-8 h-8 flex items-center justify-center bg-[#0d1f35] border border-[#2d5a8e] rounded-lg text-white hover:bg-[#1e3a5f] active:scale-95 transition-all shadow-lg"
-          aria-label="Reset view"
-        >
-          <RotateCcw className="w-3.5 h-3.5" />
-        </button>
-      </div>
-
-      {/* Tooltip */}
-      {showTooltip && (
-        <div
-          style={{
-            position: "fixed",
-            left: position.x + 12,
-            top: position.y - 28,
-            background: "#111827",
-            color: "white",
-            padding: "2px 8px",
-            borderRadius: "6px",
-            fontSize: "12px",
-            pointerEvents: "none",
-            zIndex: 999,
-          }}
-        >
-          {tooltipContent}
-        </div>
-      )}
     </div>
-  );
+
+    {/* Zoom Controls - OUTSIDE the click-area div */}
+    <div className="absolute bottom-3 right-3 flex flex-col gap-1.5 z-10">
+      <button
+        onClick={handleZoomIn}
+        className="w-8 h-8 flex items-center justify-center bg-[#0d1f35] border border-[#2d5a8e] rounded-lg text-white hover:bg-[#1e3a5f] active:scale-95 transition-all shadow-lg"
+        aria-label="Zoom in"
+      >
+        <Plus className="w-4 h-4" />
+      </button>
+      <button
+        onClick={handleZoomOut}
+        className="w-8 h-8 flex items-center justify-center bg-[#0d1f35] border border-[#2d5a8e] rounded-lg text-white hover:bg-[#1e3a5f] active:scale-95 transition-all shadow-lg"
+        aria-label="Zoom out"
+      >
+        <Minus className="w-4 h-4" />
+      </button>
+      <button
+        onClick={handleReset}
+        className="w-8 h-8 flex items-center justify-center bg-[#0d1f35] border border-[#2d5a8e] rounded-lg text-white hover:bg-[#1e3a5f] active:scale-95 transition-all shadow-lg"
+        aria-label="Reset view"
+      >
+        <RotateCcw className="w-3.5 h-3.5" />
+      </button>
+    </div>
+
+    {/* Tooltip */}
+    {showTooltip && (
+      <div
+        style={{
+          position: "fixed",
+          left: position.x + 12,
+          top: position.y - 28,
+          background: "#111827",
+          color: "white",
+          padding: "2px 8px",
+          borderRadius: "6px",
+          fontSize: "12px",
+          pointerEvents: "none",
+          zIndex: 999,
+        }}
+      >
+        {tooltipContent}
+      </div>
+    )}
+  </div>
+);
 };
