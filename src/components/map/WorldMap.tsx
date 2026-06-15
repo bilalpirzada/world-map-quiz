@@ -36,13 +36,12 @@ export const WorldMap = ({
 
   return (
     <div
-      style={{
-        width: "100%",
-        height: "500px",
-        background: "#0a1628",
-        borderRadius: "12px",
-        position: "relative",
-      }}
+  className="w-full h-[280px] sm:h-[400px] lg:h-[500px]"
+  style={{
+    background: "#0a1628",
+    borderRadius: "12px",
+    position: "relative",
+  }}
     >
       <ComposableMap
         projection="geoNaturalEarth1"
