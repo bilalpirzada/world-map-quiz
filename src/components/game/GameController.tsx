@@ -6,6 +6,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ScoreBoard } from "@/components/ui/ScoreBoard";
 import { useGameState } from "@/hooks/useGameState";
 import { countries } from "@/data/countries";
+//sound imports
+import { useSound } from "@/hooks/useSound";
+import { Volume2, VolumeX } from "lucide-react";
 
 import dynamic from "next/dynamic";
 
@@ -24,8 +27,11 @@ const WorldMap = dynamic(
 
 
 export const GameController = () => {
+
   const { state, submitAnswer, nextQuestion, resetGame, isGameOver } =
     useGameState("flag", "medium");
+
+  const { play, muted, toggleMute } = useSound();
 
   const [feedbackId, setFeedbackId] = useState<string | null>(null);
   const [isCorrectFeedback, setIsCorrectFeedback] = useState<boolean | null>(null);
@@ -50,6 +56,16 @@ export const GameController = () => {
 
   const isCorrect = clicked.id === question.id;
   setIsCorrectFeedback(isCorrect);
+  // Play sound feedback
+if (isCorrect) {
+  if ((state.streak + 1) % 3 === 0) {
+    play("streak");
+  } else {
+    play("correct");
+  }
+} else {
+  play("wrong");
+}
   setFeedbackMessage(
     isCorrect
       ? `✅ Correct! That's ${question.name}!`
