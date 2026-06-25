@@ -150,6 +150,15 @@ if (!mounted) {
   exit={{ opacity: 0, y: 10, scale: 0.95 }}
   className="text-center py-2 sm:py-3 px-4 bg-[#0d1f35] border border-[#1e3a5f] rounded-xl relative overflow-hidden shrink-0"
 >
+{/* mute button */}
+<button
+  onClick={toggleMute}
+  className="absolute top-3 left-3 w-7 h-7 flex items-center justify-center rounded-full bg-[#1e3a5f] text-gray-300 hover:bg-[#2d5a8e] transition-colors"
+  aria-label={muted ? "Unmute" : "Mute"}
+  type="button"
+>
+  {muted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+</button>
   {/* Continent badge */}
   <span className="absolute top-3 right-3 text-xs px-2 py-1 rounded-full bg-[#1e3a5f] text-blue-300 font-medium">
     {state.currentQuestion.continent}
